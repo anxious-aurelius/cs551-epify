@@ -24,6 +24,8 @@ import com.jetpack.myapplication.watchlist.WatchlistViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jetpack.myapplication.data.WatchlistDatabase
 import com.jetpack.myapplication.data.WatchlistRepository
+import com.jetpack.myapplication.search.AdvancedSearchScreen
+import com.jetpack.myapplication.showDetails.EpisodeDetailsScreen
 import com.jetpack.myapplication.showList.DiscoverShowsScreen
 import com.jetpack.myapplication.showList.PopularShowsScreen
 
@@ -46,7 +48,7 @@ fun AppNavigation() {
                 HomeScreenContent(
                     uiState = uiState,
                     onPopularTabSelect = { },
-                    onSearchClicked = { },
+                    onSearchClicked = { navController.navigate("search") },
                     onProfileClicked = { },
                     onShowClick = { showId ->
                         navController.navigate("details/$showId")
@@ -90,7 +92,10 @@ fun AppNavigation() {
                 }
                 ShowDetailScreen(
                     showId = showId,
-                    onBackClick = { navController.popBackStack() }
+                    onBackClick = { navController.popBackStack() },
+                    onEpisodeClick = { episodeId ->
+                        navController.navigate("episodeDetails/$episodeId")
+                    }
                 )
             }
             composable("popular") {
@@ -98,6 +103,29 @@ fun AppNavigation() {
             }
             composable("discover") {
                 DiscoverShowsScreen(onShowClick = { showId -> navController.navigate("details/$showId") })
+            }
+            composable(
+                "episodeDetails/{episodeId}",
+                arguments = listOf(navArgument("episodeId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val episodeId = backStackEntry.arguments?.getInt("episodeId") ?: 0
+                val context = LocalContext.current
+                // Get the database instance as you do in other composable destinations.
+                val db = WatchlistDatabase.getDatabase(context)
+                // Now call your EpisodeDetailsScreen.
+                EpisodeDetailsScreen(
+                    episodeId = episodeId,
+                    episodeDao = db.episodeDao()
+                )
+            }
+
+            composable("search") {
+                AdvancedSearchScreen(
+                    onBackClick = { navController.popBackStack() },
+                    onShowClick = { showId ->
+                        navController.navigate("details/$showId")
+                    }
+                )
             }
         }
     }

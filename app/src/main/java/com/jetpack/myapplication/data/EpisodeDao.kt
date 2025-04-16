@@ -12,4 +12,10 @@ interface EpisodeDao {
 
     @Query("SELECT * FROM watched_episodes WHERE showId = :showId")
     suspend fun getWatchedForShow(showId: Int): List<WatchedEpisodeEntity>
+
+    @Query("SELECT * FROM watched_episodes WHERE episodeId = :id")
+    suspend fun getEpisodeById(id: Int): WatchedEpisodeEntity?
+
+    @Query("UPDATE watched_episodes SET isWatched = NOT isWatched WHERE episodeId = :id")
+    suspend fun toggleWatchedStatus(id: Int)
 }

@@ -1,4 +1,5 @@
 package com.jetpack.myapplication.api
+import com.jetpack.myapplication.application.SearchResult
 import com.jetpack.myapplication.application.Show
 import com.jetpack.myapplication.application.TrendingShow
 import retrofit2.http.GET
@@ -25,5 +26,11 @@ interface TraktService {
         @Path("id") traktId: String
     ): Show
 
+    @GET("search/show")
+    suspend fun searchEverything(
+        @Query("query") query: String,
+        @Query("limit") limit: Int = 20,
+        @Query("extended") extended: String = "full"
+    ): List<SearchResult>
 
 }

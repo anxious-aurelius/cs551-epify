@@ -5,6 +5,7 @@ import kotlinx.coroutines.launch
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -41,7 +42,8 @@ fun ShowDetailContent(
     alreadyInWatchlist: Boolean,
     onAddToWatchlist: (String, String, String) -> Unit,
     onLoadSeason: (Int) -> Unit,
-    watchedViewModel: WatchedEpisodeViewModel
+    watchedViewModel: WatchedEpisodeViewModel,
+    onEpisodeClick: (Episode) -> Unit
 
 ) {
     val context = LocalContext.current
@@ -119,7 +121,6 @@ fun ShowDetailContent(
                                 show = show,
                                 onSeasonSelected = onLoadSeason,
                                 onMarkEpisodeWatched = { episode ->
-
                                     watchedViewModel.markAsWatched(
                                         WatchedEpisodeEntity(
                                             episodeId = episode.id,
@@ -130,11 +131,10 @@ fun ShowDetailContent(
                                             isWatched = true
                                         )
                                     )
-                                    coroutineScope.launch {
-                                        Toast.makeText(context, "Episode marked as watched", Toast.LENGTH_SHORT).show()
-                                    }
+                                    // Optionally show a toast and reload the season:
                                     onLoadSeason(show.selectedSeason)
-                                }
+                                },
+                                onEpisodeClick = onEpisodeClick
                             )
                         }
                     }
@@ -268,7 +268,8 @@ fun CastRow(castList: List<CastMember>) {
 fun EpisodesSection(
     show: ShowDetail,
     onSeasonSelected: (Int) -> Unit,
-    onMarkEpisodeWatched: (Episode) -> Unit = {}
+    onMarkEpisodeWatched: (Episode) -> Unit = {},
+    onEpisodeClick: (Episode) -> Unit = {}  // NEW parameter for navigation
 ) {
     var showWatched by remember { mutableStateOf("Unwatched") }
 
@@ -322,7 +323,8 @@ fun EpisodesSection(
             filteredEpisodes.forEach { episode ->
                 EpisodeItem(
                     episode = episode,
-                    onMarkAsWatched = { onMarkEpisodeWatched(episode) }
+                    onMarkAsWatched = { onMarkEpisodeWatched(episode) },
+                    onClick = { onEpisodeClick(episode) } // NEW: Pass the tapped episode to the lambda.
                 )
             }
         }
@@ -330,11 +332,16 @@ fun EpisodesSection(
 }
 
 @Composable
-fun EpisodeItem(episode: Episode) {
+fun EpisodeItem(
+    episode: Episode,
+    onMarkAsWatched: () -> Unit,
+    onClick: () -> Unit = {}  // NEW clickable lambda with a default
+) {
     Card(
         modifier = Modifier
             .width(140.dp)
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable { onClick() },  // Make the entire card clickable
         shape = RoundedCornerShape(8.dp)
     ) {
         Column {
@@ -365,15 +372,22 @@ fun EpisodeItem(episode: Episode) {
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Row(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            // Dedicated button to mark as watched. (Optional: Keep if you want both actions)
+            if (!episode.isWatched) {
+                Button(
+                    onClick = { onMarkAsWatched() },
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Text("Mark as Watched")
+                }
+            } else {
                 Text(
-                    text = if (episode.isWatched) "Watched" else "Unwatched",
-                    style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray)
+                    text = "Watched",
+                    style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
+                    modifier = Modifier.padding(8.dp)
                 )
             }
         }
     }
+
 }

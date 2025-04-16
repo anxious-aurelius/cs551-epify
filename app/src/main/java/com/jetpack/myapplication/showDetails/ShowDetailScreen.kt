@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.jetpack.myapplication.api.TraktService
 import com.jetpack.myapplication.application.RetrofitClient
 import com.jetpack.myapplication.data.*
@@ -18,7 +19,8 @@ import com.jetpack.myapplication.watchlist.WatchlistViewModelFactory
 fun ShowDetailScreen(
     showId: String,
     onBackClick: () -> Unit = {},
-    onShareClick: () -> Unit = {}
+    onShareClick: () -> Unit = {},
+    onEpisodeClick: (Int) -> Unit
 ) {
     val context = LocalContext.current
     val db = WatchlistDatabase.getDatabase(context)
@@ -63,7 +65,7 @@ fun ShowDetailScreen(
             onBackClick = onBackClick,
             onShareClick = onShareClick,
             alreadyInWatchlist = alreadyInWatchlist,
-            onAddToWatchlist = { _, title, posterUrl ->
+            onAddToWatchlist = { id, title, posterUrl ->
                 val item = WatchlistEntity(id = showId, title = title, posterUrl = posterUrl)
                 watchlistViewModel.addItem(item)
                 addedLocally = true
@@ -71,7 +73,11 @@ fun ShowDetailScreen(
             onLoadSeason = { season ->
                 viewModel.loadSeasonEpisodes(season)
             },
-            watchedViewModel = watchedViewModel
+            watchedViewModel = watchedViewModel,
+            onEpisodeClick = { episode ->
+
+                onEpisodeClick(episode.id)
+            }
         )
-    }
-}
+
+    }}

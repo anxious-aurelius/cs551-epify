@@ -21,6 +21,41 @@ class TMDBRepository {
     suspend fun getSeasonDetails(tmdbId: Int, seasonNumber: Int): TMDBSeasonResponse {
         return tmdbService.getSeasonDetails(tmdbId, seasonNumber, apiKey)
     }
+    suspend fun searchShows(
+        title: String,
+        year: Int?,
+        includeAdult: Boolean,
+        language: String
+    ): List<TmdbShow> {
+        val response = tmdbService.searchTvShows(
+            title = title,
+            year = year,
+            includeAdult = includeAdult,
+            language = language,
+            apiKey = apiKey
+        )
+        return response.results
+    }
+    suspend fun getGenres(): List<TmdbGenre> {
+        return tmdbService.getGenres(language = "en-US", apiKey = apiKey).genres
+    }
+
+    suspend fun discoverShows(
+        genreId: Int?,
+        year: Int?,
+        sortBy: String,
+        includeAdult: Boolean,
+        language: String
+    ): List<TmdbShow> {
+        return tmdbService.discoverShows(
+            apiKey = apiKey,
+            sortBy = sortBy,
+            withGenres = genreId,
+            year = year,
+            includeAdult = includeAdult,
+            language = language
+        ).results
+    }
 
 
 }

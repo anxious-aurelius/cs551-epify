@@ -36,7 +36,8 @@ import coil.request.ImageRequest
 @Composable
 fun EpisodesSection(
     show: ShowDetail,
-    onMarkEpisodeWatched: (Episode) -> Unit = {}
+    onMarkEpisodeWatched: (Episode) -> Unit = {},
+    onEpisodeClick: (Episode) -> Unit = {}
 ) {
     var selectedSeason by remember { mutableStateOf(show.selectedSeason) }
     var showWatched by remember { mutableStateOf("Unwatched") }
@@ -91,7 +92,8 @@ fun EpisodesSection(
             filteredEpisodes.forEach { episode ->
                 EpisodeItem(
                     episode = episode,
-                    onMarkAsWatched = { onMarkEpisodeWatched(episode) }
+                    onMarkAsWatched = { onMarkEpisodeWatched(episode) },
+                    onClick = { onEpisodeClick(episode) }
                 )
             }
         }

@@ -1,6 +1,7 @@
 package com.jetpack.myapplication.showDetails
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,12 +31,16 @@ import coil.request.ImageRequest
 @Composable
 fun EpisodeItem(
     episode: Episode,
-    onMarkAsWatched: (() -> Unit)? = null
+    onMarkAsWatched: (() -> Unit)? = null,
+    onClick: () -> Unit
+
 ) {
     Card(
         modifier = Modifier
             .width(140.dp)
-            .padding(vertical = 8.dp),
+
+            .padding(vertical = 8.dp)
+            .clickable { onClick() },
         shape = RoundedCornerShape(8.dp)
     ) {
         Column(modifier = Modifier.padding(8.dp)) {

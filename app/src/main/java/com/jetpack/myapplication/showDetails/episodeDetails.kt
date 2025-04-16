@@ -1,5 +1,6 @@
 package com.jetpack.myapplication.showDetails
 
+
 data class ShowDetail(
     val id: Int,
     val title: String,

@@ -3,6 +3,7 @@ package com.jetpack.myapplication.data
 import android.util.Log
 import com.jetpack.myapplication.api.TraktService
 import com.jetpack.myapplication.application.RetrofitClient
+import com.jetpack.myapplication.application.SearchResult
 import com.jetpack.myapplication.application.Show
 import com.jetpack.myapplication.application.TrendingShow
 
@@ -26,4 +27,11 @@ class HomeRepository {
         Log.d(TAG, "Fetched Popular Shows: $popularShows")
         return popularShows
     }
+    suspend fun searchShows(query: String, limit: Int = 20): List<Show> {
+        val results: List<SearchResult> = traktService.searchEverything(query, limit)
+        // Filter only "show" results that actually contain a show object
+        return results.filter { it.type == "show" && it.show != null }
+            .mapNotNull { it.show }
+    }
+
 }
