@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_package = "com.jetpack.myapplication";
+option java_multiple_files = true;
+
+message NudgePreferencesProto {
+  enum Frequency {
+    DAILY = 0;
+    WEEKLY = 1;
+    MONTHLY = 2;
+  }
+
+  Frequency frequency = 1;
+  int32 hour = 2;
+  int32 minute = 3;
+}

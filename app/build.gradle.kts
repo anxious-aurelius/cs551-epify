@@ -4,7 +4,9 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
     id("kotlin-kapt")
+    id("com.google.protobuf") version "0.9.4"
 }
+
 
 android {
     namespace = "com.jetpack.myapplication"
@@ -39,7 +41,27 @@ android {
     buildFeatures {
         compose = true
     }
+
 }
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.23.4"
+    }
+    generateProtoTasks {
+        all().forEach {
+            it.builtins {
+                create("java") {
+                    option("lite") // Use 'lite' for javalite
+                }
+            }
+        }
+    }
+}
+
+
+
+android.sourceSets.getByName("main").java.srcDirs("src/main/proto")
 
 dependencies {
 
@@ -58,6 +80,7 @@ dependencies {
 
 
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.work.runtime.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     testImplementation(libs.junit)
@@ -85,6 +108,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
+    implementation(libs.androidx.datastore)
+    implementation(libs.androidx.datastore.core)
+    implementation(libs.protobuf.javalite)
 
 }
 
