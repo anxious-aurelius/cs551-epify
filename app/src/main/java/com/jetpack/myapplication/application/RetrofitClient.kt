@@ -11,7 +11,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 object RetrofitClient {
     private const val BASE_URL = "https://api.trakt.tv/"
-    private const val CLIENT_ID = ""// Replace with your actual key
+    private const val CLIENT_ID = " 1d20f217c21df5cf312e5573405389a01762550b757c216fce492919351764ed"// Replace with your actual key
     private const val API_VERSION = "2"               // Check Trakt docs for the correct version
 
     // Interceptor to add required headers
